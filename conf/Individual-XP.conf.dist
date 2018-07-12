@@ -4,5 +4,9 @@
 #    MaxXPRate 
 #        Description: This is the max amount a player can set their xp to.
 #        Default:     Default  = 1
-#                     
-MaxXPRate = 10 
+#    DefaultXPRate
+#        Description: This is the default rate players start with.
+#        Default:     Default  = 1
+#
+MaxXPRate = 10
+DefaultXPRate = 5
