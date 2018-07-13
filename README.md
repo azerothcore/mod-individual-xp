@@ -31,7 +31,7 @@ While the Default  XP Rate variable dictates what XP rate players start with and
 
 # Video Showcase
 
-[![Youtube Link](http://diylogodesigns.com/blog/wp-content/uploads/2016/05/youtube-high-resolution-logo-download.png)](https://www.youtube.com/watch?v=T6UEX47mPeE)
+[![Youtube Link](https://i.imgur.com/Jhrdgv6.png)](https://www.youtube.com/watch?v=T6UEX47mPeE)
 
 # Show your appreciation
 
