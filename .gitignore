@@ -46,3 +46,4 @@ local.properties
 .loadpath
 .project
 .cproject
+.vscode/c_cpp_properties.json
