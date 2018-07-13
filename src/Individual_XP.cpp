@@ -19,7 +19,7 @@ class PlayerXpRate : public DataMap::Base
 public:
     PlayerXpRate() {}
     PlayerXpRate(uint32 XPRate) : XPRate(XPRate) {}
-    uint32 XPRate = DefaultRate;
+    uint32 XPRate = 1;
 };
 
 class Individual_XP : public PlayerScript
@@ -75,7 +75,9 @@ public:
             // Default Command
             { "Default", SEC_PLAYER, false, &HandleDefaultCommand, "" },
             // Disable Command
-            { "Disable", SEC_PLAYER, false, &HandleDisableCommand, "" }
+            { "Disable", SEC_PLAYER, false, &HandleDisableCommand, "" },
+            //Enable Command
+            { "Enable", SEC_PLAYER, false, &HandleEnableCommand, "" }
         };
         
         static std::vector<ChatCommand> IndividualXPBaseTable =
@@ -86,6 +88,7 @@ public:
         return IndividualXPBaseTable;
     }
     
+    // View Command
     static bool HandleViewCommand(ChatHandler* handler, char const* args)
     {
         if (*args)
@@ -95,10 +98,18 @@ public:
         if (!me)
             return false;
         
-        me->GetSession()->SendAreaTriggerMessage("Your current XP rate is %u", me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate);
+        if (me->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
+        {
+            me->GetSession()->SendAreaTriggerMessage("Your XP is currently disabled. Do .Xp Enable to re-enable it.");
+        }
+        else
+        {
+            me->GetSession()->SendAreaTriggerMessage("Your current XP rate is %u", me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate);
+        }
         return true;
     }
     
+    // Set Command
     static bool HandleSetCommand(ChatHandler* handler, char const* args)
     {
         if (!*args)
@@ -117,6 +128,7 @@ public:
         return true;
     }
     
+    // Disable Command
     static bool HandleDisableCommand(ChatHandler* handler, char const* args)
     {
         if (*args)
@@ -126,11 +138,28 @@ public:
         if (!me)
             return false;
         
-        me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = 0;
-        me->GetSession()->SendAreaTriggerMessage("You have updated your XP rate to 0");
+        // Turn Disabled On But Don't Change Value...
+        me->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
+        me->GetSession()->SendAreaTriggerMessage("You have Disabled your XP gain.");
         return true;
     }
     
+    // Enable Command
+    static bool HandleEnableCommand(ChatHandler* handler, char const* args)
+    {
+        if (*args)
+            return false;
+        
+        Player* me = handler->GetSession()->GetPlayer();
+        if (!me)
+            return false;
+          
+        me->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
+        me->GetSession()->SendAreaTriggerMessage("You have enabled your XP gain.");
+        return true;
+    }
+    
+    // Default Command
     static bool HandleDefaultCommand(ChatHandler* handler, char const* args)
     {
         if (*args)
@@ -141,7 +170,7 @@ public:
             return false;
         
         me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = DefaultRate;
-        me->GetSession()->SendAreaTriggerMessage("You have restored your XP rate to the default value or %u", DefaultRate);
+        me->GetSession()->SendAreaTriggerMessage("You have restored your XP rate to the default value of %u", DefaultRate);
         return true;
     }
 };
@@ -165,7 +194,7 @@ public:
             sConfigMgr->LoadMore(cfg_def_file.c_str());
             sConfigMgr->LoadMore(cfg_file.c_str());
             MaxRate = sConfigMgr->GetIntDefault("MaxXPRate", 10);
-            DefaultRate = sConfigMgr->GetIntDefault("DefaultXPRate", 5);
+            DefaultRate = sConfigMgr->GetIntDefault("DefaultXPRate", 1);
         }
     }
 };

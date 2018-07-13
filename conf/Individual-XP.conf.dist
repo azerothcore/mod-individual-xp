@@ -9,4 +9,4 @@
 #        Default:     Default  = 1
 #
 MaxXPRate = 10
-DefaultXPRate = 5
+DefaultXPRate = 1
