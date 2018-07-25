@@ -11,8 +11,53 @@ Coded by Talamortis - For Azerothcore
 Thanks to Rochet for the assistance
 */
 
+bool IndividualXpEnabled;
+bool IndividualXpAnnounceModule;
 uint32 MaxRate;
 uint32 DefaultRate;
+
+class Individual_XP_conf : public WorldScript
+{
+public:
+    Individual_XP_conf() : WorldScript("Individual_XP_conf_conf") { }
+
+    void OnBeforeConfigLoad(bool reload) override
+    {
+        if (!reload) {
+            std::string conf_path = _CONF_DIR;
+            std::string cfg_file = conf_path + "/Individual-XP.conf";
+
+#ifdef WIN32
+            cfg_file = "Individual-XP.conf";
+#endif
+
+            std::string cfg_def_file = cfg_file + ".dist";
+            sConfigMgr->LoadMore(cfg_def_file.c_str());
+            sConfigMgr->LoadMore(cfg_file.c_str());
+			IndividualXpAnnounceModule = sConfigMgr->GetBoolDefault("IndividualXp.Announce", 1);
+            IndividualXpEnabled = sConfigMgr->GetBoolDefault("IndividualXp.Enabled", 1);
+            MaxRate = sConfigMgr->GetIntDefault("MaxXPRate", 10);
+            DefaultRate = sConfigMgr->GetIntDefault("DefaultXPRate", 1);
+        }
+    }
+};
+
+class Individual_Xp_Announce : public PlayerScript
+{
+
+public:
+
+    Individual_Xp_Announce() : PlayerScript("Individual_Xp_Announce") {}
+
+    void OnLogin(Player* player)
+    {
+        // Announce Module
+        if (IndividualXpEnabled & IndividualXpAnnounceModule)
+        {
+            ChatHandler(player->GetSession()).SendSysMessage("This server is running the |cff4CFF00IndividualXpRate |rmodule");
+        }
+    }
+};
 
 class PlayerXpRate : public DataMap::Base
 {
@@ -39,7 +84,6 @@ public:
             Field* fields = result->Fetch();
             p->CustomData.Set("Individual_XP", new PlayerXpRate(fields[0].GetUInt32()));
         }
-            ChatHandler(p->GetSession()).SendSysMessage("This server is running the |cff4CFF00Individual XP |rmodule. Use .XP to see all the commands.");
     }
 
     void OnLogout(Player* p) override
@@ -53,41 +97,43 @@ public:
 
     void OnGiveXP(Player* p, uint32& amount, Unit* victim) override
     {
-        if (PlayerXpRate* data = p->CustomData.Get<PlayerXpRate>("Individual_XP"))
-            amount *= data->XPRate;
+        if (IndividualXpEnabled) {
+            if (PlayerXpRate* data = p->CustomData.Get<PlayerXpRate>("Individual_XP"))
+                amount *= data->XPRate;
+        }
     }
+
 };
 
 class Individual_XP_command : public CommandScript
 {
 public:
     Individual_XP_command() : CommandScript("Individual_XP_command") { }
-
     std::vector<ChatCommand> GetCommands() const override
     {
-      
-        static std::vector<ChatCommand> IndividualXPCommandTable =
-        {
-            // View Command
-            { "View", SEC_PLAYER, false, &HandleViewCommand, "" },
-            // Set Command
-            { "Set", SEC_PLAYER, false, &HandleSetCommand, "" },
-            // Default Command
-            { "Default", SEC_PLAYER, false, &HandleDefaultCommand, "" },
-            // Disable Command
-            { "Disable", SEC_PLAYER, false, &HandleDisableCommand, "" },
-            //Enable Command
-            { "Enable", SEC_PLAYER, false, &HandleEnableCommand, "" }
-        };
-        
-        static std::vector<ChatCommand> IndividualXPBaseTable =
-        {
-            { "XP", SEC_PLAYER, false, nullptr, "", IndividualXPCommandTable }
-        };
-        
-        return IndividualXPBaseTable;
+        if (IndividualXpEnabled) {
+            static std::vector<ChatCommand> IndividualXPCommandTable =
+            {
+                // View Command
+                { "View", SEC_PLAYER, false, &HandleViewCommand, "" },
+                // Set Command
+                { "Set", SEC_PLAYER, false, &HandleSetCommand, "" },
+                // Default Command
+                { "Default", SEC_PLAYER, false, &HandleDefaultCommand, "" },
+                // Disable Command
+                { "Disable", SEC_PLAYER, false, &HandleDisableCommand, "" },
+                //Enable Command
+                { "Enable", SEC_PLAYER, false, &HandleEnableCommand, "" }
+            };
+
+            static std::vector<ChatCommand> IndividualXPBaseTable =
+            {
+                { "XP", SEC_PLAYER, false, nullptr, "", IndividualXPCommandTable }
+            };
+
+            return IndividualXPBaseTable;
+        }
     }
-    
     // View Command
     static bool HandleViewCommand(ChatHandler* handler, char const* args)
     {
@@ -175,33 +221,10 @@ public:
     }
 };
 
-class Individual_XP_conf : public WorldScript
-{
-public:
-    Individual_XP_conf() : WorldScript("Individual_XP_conf_conf") { }
-
-    void OnBeforeConfigLoad(bool reload) override
-    {
-        if (!reload) {
-            std::string conf_path = _CONF_DIR;
-            std::string cfg_file = conf_path + "/Individual-XP.conf";
-
-#ifdef WIN32
-            cfg_file = "Individual-XP.conf";
-#endif
-
-            std::string cfg_def_file = cfg_file + ".dist";
-            sConfigMgr->LoadMore(cfg_def_file.c_str());
-            sConfigMgr->LoadMore(cfg_file.c_str());
-            MaxRate = sConfigMgr->GetIntDefault("MaxXPRate", 10);
-            DefaultRate = sConfigMgr->GetIntDefault("DefaultXPRate", 1);
-        }
-    }
-};
-
 void AddIndividual_XPScripts()
 {
-    new Individual_XP();
     new Individual_XP_conf();
+    new Individual_Xp_Announce();
+    new Individual_XP();
     new Individual_XP_command();
 }
