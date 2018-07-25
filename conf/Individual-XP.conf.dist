@@ -8,7 +8,7 @@
 IndividualXp.Enabled = 1
 
 #
-#    IndividualXp.Enabled 
+#    IndividualXp.Announce 
 #        Description: Announce the IndividualXP Module at logon.
 #        Default:     IndividualXp.Announce   = 1
 #
