@@ -21,30 +21,17 @@ class Individual_XP_conf : public WorldScript
 public:
     Individual_XP_conf() : WorldScript("Individual_XP_conf_conf") { }
 
-    void OnBeforeConfigLoad(bool reload) override
+    void OnBeforeConfigLoad(bool /*reload*/) override
     {
-        if (!reload) {
-            std::string conf_path = _CONF_DIR;
-            std::string cfg_file = conf_path + "/Individual-XP.conf";
-
-#ifdef WIN32
-            cfg_file = "Individual-XP.conf";
-#endif
-
-            std::string cfg_def_file = cfg_file + ".dist";
-            sConfigMgr->LoadMore(cfg_def_file.c_str());
-            sConfigMgr->LoadMore(cfg_file.c_str());
-			IndividualXpAnnounceModule = sConfigMgr->GetBoolDefault("IndividualXp.Announce", 1);
-            IndividualXpEnabled = sConfigMgr->GetBoolDefault("IndividualXp.Enabled", 1);
-            MaxRate = sConfigMgr->GetIntDefault("MaxXPRate", 10);
-            DefaultRate = sConfigMgr->GetIntDefault("DefaultXPRate", 1);
-        }
+        IndividualXpAnnounceModule = sConfigMgr->GetBoolDefault("IndividualXp.Announce", 1);
+        IndividualXpEnabled = sConfigMgr->GetBoolDefault("IndividualXp.Enabled", 1);
+        MaxRate = sConfigMgr->GetIntDefault("MaxXPRate", 10);
+        DefaultRate = sConfigMgr->GetIntDefault("DefaultXPRate", 1);
     }
 };
 
 class Individual_Xp_Announce : public PlayerScript
 {
-
 public:
 
     Individual_Xp_Announce() : PlayerScript("Individual_Xp_Announce") {}
