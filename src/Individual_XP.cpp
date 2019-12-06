@@ -98,6 +98,7 @@ public:
     Individual_XP_command() : CommandScript("Individual_XP_command") { }
     std::vector<ChatCommand> GetCommands() const override
     {
+        static std::vector<ChatCommand> IndividualXPBaseTable;
         if (IndividualXpEnabled) {
             static std::vector<ChatCommand> IndividualXPCommandTable =
             {
@@ -113,13 +114,14 @@ public:
                 { "Enable", SEC_PLAYER, false, &HandleEnableCommand, "" }
             };
 
-            static std::vector<ChatCommand> IndividualXPBaseTable =
+            IndividualXPBaseTable =
             {
                 { "XP", SEC_PLAYER, false, nullptr, "", IndividualXPCommandTable }
             };
 
             return IndividualXPBaseTable;
         }
+        return IndividualXPBaseTable;
     }
     // View Command
     static bool HandleViewCommand(ChatHandler* handler, char const* args)
