@@ -8,13 +8,12 @@
 .mailmap
 *.orig
 *.rej
-*~
+*.*~
 .hg/
 *.kdev*
 .DS_Store
 CMakeLists.txt.user
 *.bak
-*.patch
 *.diff
 *.REMOTE.*
 *.BACKUP.*
@@ -46,4 +45,3 @@ local.properties
 .loadpath
 .project
 .cproject
-.vscode/c_cpp_properties.json

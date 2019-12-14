@@ -19,19 +19,27 @@ uint32 DefaultRate;
 class Individual_XP_conf : public WorldScript
 {
 public:
-    Individual_XP_conf() : WorldScript("Individual_XP_conf_conf") { }
+    Individual_XP_conf() : WorldScript("Individual_XP_conf") { }
 
-    void OnBeforeConfigLoad(bool /*reload*/) override
+    void OnBeforeConfigLoad(bool reload) override
     {
-        IndividualXpAnnounceModule = sConfigMgr->GetBoolDefault("IndividualXp.Announce", 1);
-        IndividualXpEnabled = sConfigMgr->GetBoolDefault("IndividualXp.Enabled", 1);
-        MaxRate = sConfigMgr->GetIntDefault("MaxXPRate", 10);
-        DefaultRate = sConfigMgr->GetIntDefault("DefaultXPRate", 1);
+        if (!reload) {
+            std::string conf_path = _CONF_DIR;
+            std::string cfg_file = conf_path + "/mod_individualxp.conf";
+            std::string cfg_def_file = cfg_file + ".dist";
+            sConfigMgr->LoadMore(cfg_def_file.c_str());
+            sConfigMgr->LoadMore(cfg_file.c_str());
+	    IndividualXpAnnounceModule = sConfigMgr->GetBoolDefault("IndividualXp.Announce", 1);
+            IndividualXpEnabled = sConfigMgr->GetBoolDefault("IndividualXp.Enabled", 1);
+            MaxRate = sConfigMgr->GetIntDefault("MaxXPRate", 10);
+            DefaultRate = sConfigMgr->GetIntDefault("DefaultXPRate", 1);
+        }
     }
 };
 
 class Individual_Xp_Announce : public PlayerScript
 {
+
 public:
 
     Individual_Xp_Announce() : PlayerScript("Individual_Xp_Announce") {}
@@ -82,7 +90,7 @@ public:
         }
     }
 
-    void OnGiveXP(Player* p, uint32& amount, Unit* victim) override
+    void OnGiveXP(Player* p, uint32& amount, Unit* /*victim*/) override
     {
         if (IndividualXpEnabled) {
             if (PlayerXpRate* data = p->CustomData.Get<PlayerXpRate>("Individual_XP"))
@@ -98,7 +106,7 @@ public:
     Individual_XP_command() : CommandScript("Individual_XP_command") { }
     std::vector<ChatCommand> GetCommands() const override
     {
-        if (IndividualXpEnabled) {
+
             static std::vector<ChatCommand> IndividualXPCommandTable =
             {
                 // View Command
@@ -120,7 +128,7 @@ public:
 
             return IndividualXPBaseTable;
         }
-    }
+	
     // View Command
     static bool HandleViewCommand(ChatHandler* handler, char const* args)
     {
@@ -137,7 +145,7 @@ public:
         }
         else
         {
-            me->GetSession()->SendAreaTriggerMessage("Your current XP rate is %u", me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate);
+            me->GetSession()->SendAreaTriggerMessage("Your current XP multiplier is %u", me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate);
         }
         return true;
     }
@@ -157,7 +165,7 @@ public:
             return false;
 
         me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = rate;
-        me->GetSession()->SendAreaTriggerMessage("You have updated your XP rate to %u", rate);
+        me->GetSession()->SendAreaTriggerMessage("You have updated your XP multiplier to %u", rate);
         return true;
     }
     
@@ -203,7 +211,7 @@ public:
             return false;
         
         me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = DefaultRate;
-        me->GetSession()->SendAreaTriggerMessage("You have restored your XP rate to the default value of %u", DefaultRate);
+        me->GetSession()->SendAreaTriggerMessage("You have restored your XP multiplier to the default value of %u", DefaultRate);
         return true;
     }
 };
