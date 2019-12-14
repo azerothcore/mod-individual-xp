@@ -47,7 +47,7 @@ jobs:
         - source ./apps/ci/ci-import-db.sh
       script:
         - source ./apps/ci/ci-compile.sh
-      #  - source ./apps/ci/ci-worldserver-dry-run.sh
+        - source ./apps/ci/ci-worldserver-dry-run.sh
 
     - stage: prepare_cache
       env: TRAVIS_BUILD_ID="2"
