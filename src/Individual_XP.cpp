@@ -82,7 +82,7 @@ public:
         }
     }
 
-    void OnGiveXP(Player* p, uint32& amount, Unit* victim) override
+    void OnGiveXP(Player* p, uint32& amount, Unit* /*victim*/) override
     {
         if (IndividualXpEnabled) {
             if (PlayerXpRate* data = p->CustomData.Get<PlayerXpRate>("Individual_XP"))
@@ -98,34 +98,47 @@ public:
     Individual_XP_command() : CommandScript("Individual_XP_command") { }
     std::vector<ChatCommand> GetCommands() const override
     {
-        if (IndividualXpEnabled) {
-            static std::vector<ChatCommand> IndividualXPCommandTable =
-            {
-                // View Command
-                { "View", SEC_PLAYER, false, &HandleViewCommand, "" },
-                // Set Command
-                { "Set", SEC_PLAYER, false, &HandleSetCommand, "" },
-                // Default Command
-                { "Default", SEC_PLAYER, false, &HandleDefaultCommand, "" },
-                // Disable Command
-                { "Disable", SEC_PLAYER, false, &HandleDisableCommand, "" },
-                //Enable Command
-                { "Enable", SEC_PLAYER, false, &HandleEnableCommand, "" }
-            };
+        static std::vector<ChatCommand> IndividualXPCommandTable =
+        {
+            { "enable",     SEC_PLAYER, false, &HandleEnableCommand,    "" },
+            { "disable",    SEC_PLAYER, false, &HandleDisableCommand,   "" },
+            { "view",       SEC_PLAYER, false, &HandleViewCommand,      "" },
+            { "set",        SEC_PLAYER, false, &HandleSetCommand,       "" },
+            { "default",    SEC_PLAYER, false, &HandleDefaultCommand,   "" },
+            { "",           SEC_PLAYER, false, &HandleXPCommand,        "" }
+        };
 
-            static std::vector<ChatCommand> IndividualXPBaseTable =
-            {
-                { "XP", SEC_PLAYER, false, nullptr, "", IndividualXPCommandTable }
-            };
+        static std::vector<ChatCommand> IndividualXPBaseTable =
+        {
+            { "xp", SEC_PLAYER, false, nullptr, "", IndividualXPCommandTable }
+        };
 
             return IndividualXPBaseTable;
-        }
     }
-    // View Command
+
+    static bool HandleXPCommand(ChatHandler* handler, char const* args)
+    {
+        if (!IndividualXpEnabled)
+        {
+            handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        if (!*args)
+            return false;
+
+        return true;
+    }
+
     static bool HandleViewCommand(ChatHandler* handler, char const* args)
     {
-        if (*args)
+        if (!IndividualXpEnabled)
+        {
+            handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+            handler->SetSentErrorMessage(true);
             return false;
+        }
           
         Player* me = handler->GetSession()->GetPlayer();
         if (!me)
@@ -133,7 +146,9 @@ public:
         
         if (me->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
         {
-            me->GetSession()->SendAreaTriggerMessage("Your XP is currently disabled. Do .Xp Enable to re-enable it.");
+            handler->PSendSysMessage("[XP] Your Individual XP is currently disabled. Use .xp enable to re-enable it.");
+            handler->SetSentErrorMessage(true);
+            return false;
         }
         else
         {
@@ -145,6 +160,13 @@ public:
     // Set Command
     static bool HandleSetCommand(ChatHandler* handler, char const* args)
     {
+        if (!IndividualXpEnabled)
+        {
+            handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
         if (!*args)
             return false;
 
@@ -154,7 +176,17 @@ public:
 
         uint32 rate = (uint32)atol(args);
         if (rate > MaxRate)
+        {
+            handler->PSendSysMessage("[XP] The maximum rate limit is %u.", MaxRate);
+            handler->SetSentErrorMessage(true);
             return false;
+        }
+        else if (rate == 0)
+        {
+            handler->PSendSysMessage("[XP] The minimum rate limit is 1.");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
 
         me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = rate;
         me->GetSession()->SendAreaTriggerMessage("You have updated your XP rate to %u", rate);
@@ -164,24 +196,32 @@ public:
     // Disable Command
     static bool HandleDisableCommand(ChatHandler* handler, char const* args)
     {
-        if (*args)
+        if (!IndividualXpEnabled)
+        {
+            handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+            handler->SetSentErrorMessage(true);
             return false;
-          
+        }
+
         Player* me = handler->GetSession()->GetPlayer();
         if (!me)
             return false;
         
         // Turn Disabled On But Don't Change Value...
         me->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-        me->GetSession()->SendAreaTriggerMessage("You have Disabled your XP gain.");
+        me->GetSession()->SendAreaTriggerMessage("You have disabled your XP gain.");
         return true;
     }
     
     // Enable Command
     static bool HandleEnableCommand(ChatHandler* handler, char const* args)
     {
-        if (*args)
+        if (!IndividualXpEnabled)
+        {
+            handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+            handler->SetSentErrorMessage(true);
             return false;
+        }
         
         Player* me = handler->GetSession()->GetPlayer();
         if (!me)
@@ -195,8 +235,12 @@ public:
     // Default Command
     static bool HandleDefaultCommand(ChatHandler* handler, char const* args)
     {
-        if (*args)
+        if (!IndividualXpEnabled)
+        {
+            handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+            handler->SetSentErrorMessage(true);
             return false;
+        }
           
         Player* me = handler->GetSession()->GetPlayer();
         if (!me)
