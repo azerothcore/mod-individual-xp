@@ -5,9 +5,9 @@
 #
 
 DB_CHARACTERS_CUSTOM_PATHS+=(
-	$MOD_SKELETON_ROOT"/sql/characters/"
+	$MOD_INDIVIDUAL_XP_ROOT"/sql/characters/"
 )
 
 DB_WORLD_CUSTOM_PATHS+=(
-	$MOD_SKELETON_ROOT"/sql/world/"
+	$MOD_INDIVIDUAL_XP_ROOT"/sql/world/"
 )
