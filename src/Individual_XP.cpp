@@ -131,7 +131,7 @@ public:
         return true;
     }
 
-    static bool HandleViewCommand(ChatHandler* handler, char const* args)
+    static bool HandleViewCommand(ChatHandler* handler, char const* /*args*/)
     {
         if (!IndividualXpEnabled)
         {
@@ -194,7 +194,7 @@ public:
     }
     
     // Disable Command
-    static bool HandleDisableCommand(ChatHandler* handler, char const* args)
+    static bool HandleDisableCommand(ChatHandler* handler, char const* /*args*/)
     {
         if (!IndividualXpEnabled)
         {
@@ -214,7 +214,7 @@ public:
     }
     
     // Enable Command
-    static bool HandleEnableCommand(ChatHandler* handler, char const* args)
+    static bool HandleEnableCommand(ChatHandler* handler, char const* /*args*/)
     {
         if (!IndividualXpEnabled)
         {
@@ -233,7 +233,7 @@ public:
     }
     
     // Default Command
-    static bool HandleDefaultCommand(ChatHandler* handler, char const* args)
+    static bool HandleDefaultCommand(ChatHandler* handler, char const* /*args*/)
     {
         if (!IndividualXpEnabled)
         {
