@@ -1,3 +1,6 @@
+# ![logo](https://raw.githubusercontent.com/azerothcore/azerothcore.github.io/master/images/logo-github.png) AzerothCore
+- Latest build status with azerothcore: [![Build Status](https://travis-ci.org/azerothcore/mod-individual-xp.svg?branch=master)](https://travis-ci.org/azerothcore/mod-individual-xp)
+
 # Individual XP Module
 
 Allows players to _View, Set, or Toggle_ the rate at which they gain experience individually.
