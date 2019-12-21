@@ -4,16 +4,10 @@
 # CUSTOM
 #
 
-DB_WORLD_CUSTOM_PATHS+=(
+DB_CHARACTERS_CUSTOM_PATHS+=(
 	$MOD_SKELETON_ROOT"/sql/characters/"
-	$MOD_SKELETON_ROOT"/sql/world/"
 )
 
-#
-# UPDATES
-#
-
-DB_WORLD_UPDATE_PATHS+=(
-	$MOD_SKELETON_ROOT"/data/sql/updates/characters/"
-	$MOD_SKELETON_ROOT"/data/sql/updates/world/"
+DB_WORLD_CUSTOM_PATHS+=(
+	$MOD_SKELETON_ROOT"/sql/world/"
 )
