@@ -15,6 +15,7 @@ bool IndividualXpEnabled;
 bool IndividualXpAnnounceModule;
 uint32 MaxRate;
 uint32 DefaultRate;
+uint32 Language;
 
 class Individual_XP_conf : public WorldScript
 {
@@ -27,6 +28,7 @@ public:
         IndividualXpEnabled = sConfigMgr->GetBoolDefault("IndividualXp.Enabled", 1);
         MaxRate = sConfigMgr->GetIntDefault("MaxXPRate", 10);
         DefaultRate = sConfigMgr->GetIntDefault("DefaultXPRate", 1);
+        Language = sConfigMgr->GetIntDefault("Language", 0);
     }
 };
 
@@ -41,7 +43,20 @@ public:
         // Announce Module
         if (IndividualXpEnabled & IndividualXpAnnounceModule)
         {
-            ChatHandler(player->GetSession()).SendSysMessage("This server is running the |cff4CFF00IndividualXpRate |rmodule");
+            switch (Language)
+            {
+            case 0:
+                ChatHandler(player->GetSession()).SendSysMessage("This server is running the |cff4CFF00IndividualXpRate |rmodule");
+                break;
+            case 6:
+                ChatHandler(player->GetSession()).SendSysMessage("Este servidor está ejecutando el módulo |cff4CFF00IndividualXpRate |r");
+                break;
+            case 7:
+                ChatHandler(player->GetSession()).SendSysMessage("Este servidor está ejecutando el módulo |cff4CFF00IndividualXpRate |r");
+                break;
+            default:
+                break;
+            }
         }
     }
 };
@@ -120,7 +135,20 @@ public:
     {
         if (!IndividualXpEnabled)
         {
-            handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+            switch (Language)
+            {
+            case 0:
+                handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+                break;
+            case 6:
+                handler->PSendSysMessage("[XP] El módulo XP individual está desactivado.");
+                break;
+            case 7:
+                handler->PSendSysMessage("[XP] El módulo XP individual está desactivado.");
+                break;
+            default:
+                break;
+            }
             handler->SetSentErrorMessage(true);
             return false;
         }
@@ -135,7 +163,20 @@ public:
     {
         if (!IndividualXpEnabled)
         {
-            handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+            switch (Language)
+            {
+            case 0:
+                handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+                break;
+            case 6:
+                handler->PSendSysMessage("[XP] El módulo XP individual está desactivado.");
+                break;
+            case 7:
+                handler->PSendSysMessage("[XP] El módulo XP individual está desactivado.");
+                break;
+            default:
+                break;
+            }
             handler->SetSentErrorMessage(true);
             return false;
         }
@@ -146,13 +187,39 @@ public:
         
         if (me->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
         {
-            handler->PSendSysMessage("[XP] Your Individual XP is currently disabled. Use .xp enable to re-enable it.");
+            switch (Language)
+            {
+            case 0:
+                handler->PSendSysMessage("[XP] Your Individual XP is currently disabled. Use .xp enable to re-enable it.");
+                break;
+            case 6:
+                handler->PSendSysMessage("[XP] Su XP individual está actualmente desactivado. Utilice .xp enable para volver a activarlo.");
+                break;
+            case 7:
+                handler->PSendSysMessage("[XP] Su XP individual está actualmente desactivado. Utilice .xp enable para volver a activarlo.");
+                break;
+            default:
+                break;
+            }
             handler->SetSentErrorMessage(true);
             return false;
         }
         else
         {
-            me->GetSession()->SendAreaTriggerMessage("Your current XP rate is %u", me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate);
+            switch (Language)
+            {
+            case 0:
+                me->GetSession()->SendAreaTriggerMessage("Your current XP rate is %u", me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate);
+                break;
+            case 6:
+                me->GetSession()->SendAreaTriggerMessage("Su rate actual es %u", me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate);
+                break;
+            case 7:
+                me->GetSession()->SendAreaTriggerMessage("Su rate actual es %u", me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate);
+                break;
+            default:
+                break;
+            }
         }
         return true;
     }
@@ -162,7 +229,20 @@ public:
     {
         if (!IndividualXpEnabled)
         {
-            handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+            switch (Language)
+            {
+            case 0:
+                handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+                break;
+            case 6:
+                handler->PSendSysMessage("[XP] El módulo XP individual está desactivado.");
+                break;
+            case 7:
+                handler->PSendSysMessage("[XP] El módulo XP individual está desactivado.");
+                break;
+            default:
+                break;
+            }
             handler->SetSentErrorMessage(true);
             return false;
         }
@@ -177,19 +257,58 @@ public:
         uint32 rate = (uint32)atol(args);
         if (rate > MaxRate)
         {
-            handler->PSendSysMessage("[XP] The maximum rate limit is %u.", MaxRate);
+            switch (Language)
+            {
+            case 0:
+                handler->PSendSysMessage("[XP] The maximum rate limit is %u.", MaxRate);
+                break;
+            case 6:
+                handler->PSendSysMessage("[XP] El límite máximo de la rate es %u.", MaxRate);
+                break;
+            case 7:
+                handler->PSendSysMessage("[XP] El límite máximo de la rate es %u.", MaxRate);
+                break;
+            default:
+                break;
+            }
             handler->SetSentErrorMessage(true);
             return false;
         }
         else if (rate == 0)
         {
-            handler->PSendSysMessage("[XP] The minimum rate limit is 1.");
+            switch (Language)
+            {
+            case 0:
+                handler->PSendSysMessage("[XP] The minimum rate limit is 1.");
+                break;
+            case 6:
+                handler->PSendSysMessage("[XP] El límite de la rate mínima es de 1.");
+                break;
+            case 7:
+                handler->PSendSysMessage("[XP] El límite de la rate mínima es de 1.");
+                break;
+            default:
+                break;
+            }
             handler->SetSentErrorMessage(true);
             return false;
         }
 
         me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = rate;
-        me->GetSession()->SendAreaTriggerMessage("You have updated your XP rate to %u", rate);
+        switch (Language)
+        {
+        case 0:
+            me->GetSession()->SendAreaTriggerMessage("You have updated your XP rate to %u", rate);
+            break;
+        case 6:
+            me->GetSession()->SendAreaTriggerMessage("Ha actualizado su rate de XP a %u", rate);
+            break;
+        case 7:
+            me->GetSession()->SendAreaTriggerMessage("Ha actualizado su rate de XP a %u", rate);
+            break;
+        default:
+            break;
+        }
         return true;
     }
     
@@ -198,7 +317,20 @@ public:
     {
         if (!IndividualXpEnabled)
         {
-            handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+            switch (Language)
+            {
+            case 0:
+                handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+                break;
+            case 6:
+                handler->PSendSysMessage("[XP] El módulo XP individual está desactivado.");
+                break;
+            case 7:
+                handler->PSendSysMessage("[XP] El módulo XP individual está desactivado.");
+                break;
+            default:
+                break;
+            }
             handler->SetSentErrorMessage(true);
             return false;
         }
@@ -209,7 +341,20 @@ public:
         
         // Turn Disabled On But Don't Change Value...
         me->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-        me->GetSession()->SendAreaTriggerMessage("You have disabled your XP gain.");
+        switch (Language)
+        {
+        case 0:
+            me->GetSession()->SendAreaTriggerMessage("You have disabled your XP gain.");
+            break;
+        case 6:
+            me->GetSession()->SendAreaTriggerMessage("Ha desactivado su rate de XP.");
+            break;
+        case 7:
+            me->GetSession()->SendAreaTriggerMessage("Ha desactivado su rate de XP.");
+            break;
+        default:
+            break;
+        }
         return true;
     }
     
@@ -218,7 +363,20 @@ public:
     {
         if (!IndividualXpEnabled)
         {
-            handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+            switch (Language)
+            {
+            case 0:
+                handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+                break;
+            case 6:
+                handler->PSendSysMessage("[XP] El módulo XP individual está desactivado.");
+                break;
+            case 7:
+                handler->PSendSysMessage("[XP] El módulo XP individual está desactivado.");
+                break;
+            default:
+                break;
+            }
             handler->SetSentErrorMessage(true);
             return false;
         }
@@ -228,7 +386,20 @@ public:
             return false;
           
         me->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-        me->GetSession()->SendAreaTriggerMessage("You have enabled your XP gain.");
+        switch (Language)
+        {
+        case 0:
+            me->GetSession()->SendAreaTriggerMessage("You have enabled your XP gain.");
+            break;
+        case 6:
+            me->GetSession()->SendAreaTriggerMessage("Ha activado su rate de XP.");
+            break;
+        case 7:
+            me->GetSession()->SendAreaTriggerMessage("Ha activado su rate de XP.");
+            break;
+        default:
+            break;
+        }
         return true;
     }
     
@@ -237,7 +408,20 @@ public:
     {
         if (!IndividualXpEnabled)
         {
-            handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+            switch (Language)
+            {
+            case 0:
+                handler->PSendSysMessage("[XP] The Individual XP module is deactivated.");
+                break;
+            case 6:
+                handler->PSendSysMessage("[XP] El módulo XP individual está desactivado.");
+                break;
+            case 7:
+                handler->PSendSysMessage("[XP] El módulo XP individual está desactivado.");
+                break;
+            default:
+                break;
+            }
             handler->SetSentErrorMessage(true);
             return false;
         }
@@ -247,7 +431,20 @@ public:
             return false;
         
         me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = DefaultRate;
-        me->GetSession()->SendAreaTriggerMessage("You have restored your XP rate to the default value of %u", DefaultRate);
+        switch (Language)
+        {
+        case 0:
+            me->GetSession()->SendAreaTriggerMessage("You have restored your XP rate to the default value of %u", DefaultRate);
+            break;
+        case 6:
+            me->GetSession()->SendAreaTriggerMessage("Ha restaurado su rate de XP al valor predeterminado de %u", DefaultRate);
+            break;
+        case 7:
+            me->GetSession()->SendAreaTriggerMessage("Ha restaurado su rate de XP al valor predeterminado de %u", DefaultRate);
+            break;
+        default:
+            break;
+        }
         return true;
     }
 };

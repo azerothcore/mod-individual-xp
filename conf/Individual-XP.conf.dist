@@ -24,3 +24,19 @@ IndividualXp.Announce = 1
 #
 MaxXPRate = 10
 DefaultXPRate = 1
+
+#
+#    Language
+#        Description: Select the language of the messages.
+#        Default:     Language = 0
+#            enUS = 0
+#            koKR = 1
+#            frFR = 2
+#            deDE = 3
+#            zhCN = 4
+#            zhTW = 5
+#            esES = 6
+#            esMX = 7
+#            ruRU = 8
+#
+Language = 0
