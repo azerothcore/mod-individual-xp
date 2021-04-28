@@ -61,7 +61,7 @@ public:
 
     void OnLogin(Player* p) override
     {
-        QueryResult result = CharacterDatabase.PQuery("SELECT `XPRate` FROM `individualxp` WHERE `CharacterGUID` = %u", p->GetGUIDLow());
+        QueryResult result = CharacterDatabase.PQuery("SELECT `XPRate` FROM `individualxp` WHERE `CharacterGUID` = %u", p->GetGUID().GetCounter());
         if (!result)
         {
             p->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = DefaultRate;
@@ -78,7 +78,7 @@ public:
         if (PlayerXpRate* data = p->CustomData.Get<PlayerXpRate>("Individual_XP"))
         {
             uint32 rate = data->XPRate;
-            CharacterDatabase.DirectPExecute("REPLACE INTO `individualxp` (`CharacterGUID`, `XPRate`) VALUES (%u, %u);", p->GetGUIDLow(), rate);
+            CharacterDatabase.DirectPExecute("REPLACE INTO `individualxp` (`CharacterGUID`, `XPRate`) VALUES (%u, %u);", p->GetGUID().GetCounter(), rate);
         }
     }
 
@@ -139,11 +139,11 @@ public:
             handler->SetSentErrorMessage(true);
             return false;
         }
-          
+
         Player* me = handler->GetSession()->GetPlayer();
         if (!me)
             return false;
-        
+
         if (me->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
         {
             handler->PSendSysMessage("[XP] Your Individual XP is currently disabled. Use .xp enable to re-enable it.");
@@ -156,7 +156,7 @@ public:
         }
         return true;
     }
-    
+
     // Set Command
     static bool HandleSetCommand(ChatHandler* handler, char const* args)
     {
@@ -192,7 +192,7 @@ public:
         me->GetSession()->SendAreaTriggerMessage("You have updated your XP rate to %u", rate);
         return true;
     }
-    
+
     // Disable Command
     static bool HandleDisableCommand(ChatHandler* handler, char const* /*args*/)
     {
@@ -206,13 +206,13 @@ public:
         Player* me = handler->GetSession()->GetPlayer();
         if (!me)
             return false;
-        
+
         // Turn Disabled On But Don't Change Value...
         me->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
         me->GetSession()->SendAreaTriggerMessage("You have disabled your XP gain.");
         return true;
     }
-    
+
     // Enable Command
     static bool HandleEnableCommand(ChatHandler* handler, char const* /*args*/)
     {
@@ -222,16 +222,16 @@ public:
             handler->SetSentErrorMessage(true);
             return false;
         }
-        
+
         Player* me = handler->GetSession()->GetPlayer();
         if (!me)
             return false;
-          
+
         me->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
         me->GetSession()->SendAreaTriggerMessage("You have enabled your XP gain.");
         return true;
     }
-    
+
     // Default Command
     static bool HandleDefaultCommand(ChatHandler* handler, char const* /*args*/)
     {
@@ -241,11 +241,11 @@ public:
             handler->SetSentErrorMessage(true);
             return false;
         }
-          
+
         Player* me = handler->GetSession()->GetPlayer();
         if (!me)
             return false;
-        
+
         me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = DefaultRate;
         me->GetSession()->SendAreaTriggerMessage("You have restored your XP rate to the default value of %u", DefaultRate);
         return true;
