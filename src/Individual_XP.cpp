@@ -6,6 +6,12 @@
 #include "Object.h"
 #include "DataMap.h"
 
+#if AC_COMPILER == AC_COMPILER_GNU
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
+using namespace Acore::ChatCommands;
+
 /*
 Coded by Talamortis - For Azerothcore
 Thanks to Rochet for the assistance
