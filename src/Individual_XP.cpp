@@ -29,7 +29,7 @@ public:
 
     void OnBeforeConfigLoad(bool /*reload*/) override
     {
-        IndividualXpAnnounceModule = sConfigMgr->GetBoolDefault("IndividualXp.Announce", 1);
+        IndividualXpAnnounceModule = sConfigMgr->GetOption<bool>("IndividualXp.Announce", 1);
         IndividualXpEnabled = sConfigMgr->GetBoolDefault("IndividualXp.Enabled", 1);
         MaxRate = sConfigMgr->GetIntDefault("MaxXPRate", 10);
         DefaultRate = sConfigMgr->GetIntDefault("DefaultXPRate", 1);
@@ -67,7 +67,7 @@ public:
 
     void OnLogin(Player* p) override
     {
-        QueryResult result = CharacterDatabase.PQuery("SELECT `XPRate` FROM `individualxp` WHERE `CharacterGUID` = %u", p->GetGUID().GetCounter());
+        QueryResult result = CharacterDatabase.Query("SELECT `XPRate` FROM `individualxp` WHERE `CharacterGUID` = %u", p->GetGUID().GetCounter());
         if (!result)
         {
             p->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = DefaultRate;
@@ -75,7 +75,7 @@ public:
         else
         {
             Field* fields = result->Fetch();
-            p->CustomData.Set("Individual_XP", new PlayerXpRate(fields[0].GetUInt32()));
+            p->CustomData.Set("Individual_XP", new PlayerXpRate(fields[0].Get<uint32>()));
         }
     }
 
@@ -84,7 +84,7 @@ public:
         if (PlayerXpRate* data = p->CustomData.Get<PlayerXpRate>("Individual_XP"))
         {
             uint32 rate = data->XPRate;
-            CharacterDatabase.DirectPExecute("REPLACE INTO `individualxp` (`CharacterGUID`, `XPRate`) VALUES (%u, %u);", p->GetGUID().GetCounter(), rate);
+            CharacterDatabase.DirectExecute("REPLACE INTO `individualxp` (`CharacterGUID`, `XPRate`) VALUES (%u, %u);", p->GetGUID().GetCounter(), rate);
         }
     }
 
