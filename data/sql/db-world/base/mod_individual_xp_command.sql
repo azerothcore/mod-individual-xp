@@ -1,4 +1,4 @@
-DELETE FROM `command` WHERE name IN ('xp', 'xp set', 'xp view', 'xp default', 'xp enable', 'xp disable');
+DELETE FROM `command` WHERE `name` IN ('xp', 'xp set', 'xp view', 'xp default', 'xp enable', 'xp disable');
 
 INSERT INTO `command` (`name`, `security`, `help`) VALUES 
 ('xp', 0, 'Syntax: .xp $subcommand\nType .help xp to see a list of subcommands\nor .help xp $subcommand to see info on the subcommand.'),
