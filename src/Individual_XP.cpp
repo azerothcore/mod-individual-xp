@@ -38,16 +38,16 @@ public:
 
 enum IndividualXP
 {
-    ACORE_STRING_0 = 35411,
-    ACORE_STRING_1,
-    ACORE_STRING_2,
-    ACORE_STRING_3,
-    ACORE_STRING_4,
-    ACORE_STRING_5,
-    ACORE_STRING_6,
-    ACORE_STRING_7,
-    ACORE_STRING_8,
-    ACORE_STRING_9
+    ACORE_STRING_CREDIT = 35411,
+    ACORE_STRING_MODULE_DISABLED,
+    ACORE_STRING_RATES_DISABLED,
+    ACORE_STRING_COMMAND_VIEW,
+    ACORE_STRING_MAX_RATE,
+    ACORE_STRING_MIN_RATE,
+    ACORE_STRING_COMMAND_SET,
+    ACORE_STRING_COMMAND_DISABLED,
+    ACORE_STRING_COMMAND_ENABLED,
+    ACORE_STRING_COMMAND_DEFAULT
 };
 
 class Individual_Xp_Announce : public PlayerScript
@@ -61,7 +61,7 @@ public:
         // Announce Module
         if (IndividualXpEnabled & IndividualXpAnnounceModule)
         {
-            ChatHandler(player->GetSession()).SendSysMessage(ACORE_STRING_0);
+            ChatHandler(player->GetSession()).SendSysMessage(ACORE_STRING_CREDIT);
         }
     }
 };
@@ -140,7 +140,7 @@ public:
     {
         if (!IndividualXpEnabled)
         {
-            handler->PSendSysMessage(ACORE_STRING_1);
+            handler->PSendSysMessage(ACORE_STRING_MODULE_DISABLED);
             handler->SetSentErrorMessage(true);
             return false;
         }
@@ -155,7 +155,7 @@ public:
     {
         if (!IndividualXpEnabled)
         {
-            handler->PSendSysMessage(ACORE_STRING_1);
+            handler->PSendSysMessage(ACORE_STRING_MODULE_DISABLED);
             handler->SetSentErrorMessage(true);
             return false;
         }
@@ -166,13 +166,13 @@ public:
 
         if (me->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
         {
-            handler->PSendSysMessage(ACORE_STRING_2);
+            handler->PSendSysMessage(ACORE_STRING_RATES_DISABLED);
             handler->SetSentErrorMessage(true);
             return false;
         }
         else
         {
-            me->GetSession()->SendAreaTriggerMessage(ACORE_STRING_3, me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate);
+            me->GetSession()->SendAreaTriggerMessage(ACORE_STRING_COMMAND_VIEW, me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate);
         }
         return true;
     }
@@ -182,7 +182,7 @@ public:
     {
         if (!IndividualXpEnabled)
         {
-            handler->PSendSysMessage(ACORE_STRING_1);
+            handler->PSendSysMessage(ACORE_STRING_MODULE_DISABLED);
             handler->SetSentErrorMessage(true);
             return false;
         }
@@ -197,19 +197,19 @@ public:
         uint32 rate = (uint32)atol(args);
         if (rate > MaxRate)
         {
-            handler->PSendSysMessage(ACORE_STRING_4, MaxRate);
+            handler->PSendSysMessage(ACORE_STRING_MAX_RATE, MaxRate);
             handler->SetSentErrorMessage(true);
             return false;
         }
         else if (rate == 0)
         {
-            handler->PSendSysMessage(ACORE_STRING_5);
+            handler->PSendSysMessage(ACORE_STRING_MIN_RATE);
             handler->SetSentErrorMessage(true);
             return false;
         }
 
         me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = rate;
-        me->GetSession()->SendAreaTriggerMessage(ACORE_STRING_6, rate);
+        me->GetSession()->SendAreaTriggerMessage(ACORE_STRING_COMMAND_SET, rate);
         return true;
     }
 
@@ -218,7 +218,7 @@ public:
     {
         if (!IndividualXpEnabled)
         {
-            handler->PSendSysMessage(ACORE_STRING_1);
+            handler->PSendSysMessage(ACORE_STRING_MODULE_DISABLED);
             handler->SetSentErrorMessage(true);
             return false;
         }
@@ -229,7 +229,7 @@ public:
 
         // Turn Disabled On But Don't Change Value...
         me->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-        me->GetSession()->SendAreaTriggerMessage(ACORE_STRING_7);
+        me->GetSession()->SendAreaTriggerMessage(ACORE_STRING_COMMAND_DISABLED);
         return true;
     }
 
@@ -238,7 +238,7 @@ public:
     {
         if (!IndividualXpEnabled)
         {
-            handler->PSendSysMessage(ACORE_STRING_1);
+            handler->PSendSysMessage(ACORE_STRING_MODULE_DISABLED);
             handler->SetSentErrorMessage(true);
             return false;
         }
@@ -248,7 +248,7 @@ public:
             return false;
 
         me->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-        me->GetSession()->SendAreaTriggerMessage(ACORE_STRING_8);
+        me->GetSession()->SendAreaTriggerMessage(ACORE_STRING_COMMAND_ENABLED);
         return true;
     }
 
@@ -257,7 +257,7 @@ public:
     {
         if (!IndividualXpEnabled)
         {
-            handler->PSendSysMessage(ACORE_STRING_1);
+            handler->PSendSysMessage(ACORE_STRING_MODULE_DISABLED);
             handler->SetSentErrorMessage(true);
             return false;
         }
@@ -267,7 +267,7 @@ public:
             return false;
 
         me->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = DefaultRate;
-        me->GetSession()->SendAreaTriggerMessage(ACORE_STRING_9, DefaultRate);
+        me->GetSession()->SendAreaTriggerMessage(ACORE_STRING_COMMAND_DEFAULT, DefaultRate);
         return true;
     }
 };
