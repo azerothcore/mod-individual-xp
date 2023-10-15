@@ -105,8 +105,19 @@ public:
     void OnGiveXP(Player* p, uint32& amount, Unit* /*victim*/, uint8 /*xpSource*/) override
     {
         if (IndividualXpEnabled) {
-            if (PlayerXpRate* data = p->CustomData.Get<PlayerXpRate>("Individual_XP"))
-                amount *= data->XPRate;
+            uint32 serverKillRate = sConfigMgr->GetOption<bool>("Rate.XP.Kill", 1);
+            PlayerXpRate* data = p->CustomData.Get<PlayerXpRate>("Individual_XP");
+
+            // default to the rate set by the player
+            uint32 rate = data->XPRate;
+
+            if (data && data->XPRate > serverKillRate) {
+                // assume that the server setting Rate.XP.Kill is our max and
+                // if the player rate is higher than that default to the server rate
+                rate = serverKillRate;
+            }
+
+            amount *= rate;
         }
     }
 
