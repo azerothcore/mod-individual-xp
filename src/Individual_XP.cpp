@@ -18,21 +18,21 @@ bool IndividualXpAnnounceModule;
 uint32 MaxRate;
 uint32 DefaultRate;
 
-class Individual_XP_conf : public WorldScript
+class IndividualXPConf : public WorldScript
 {
 public:
-    Individual_XP_conf() : WorldScript("Individual_XP_conf_conf") { }
+    IndividualXPConf() : WorldScript("IndividualXPConf") { }
 
     void OnBeforeConfigLoad(bool /*reload*/) override
     {
         IndividualXpAnnounceModule = sConfigMgr->GetOption<bool>("IndividualXp.Announce", 1);
-        IndividualXpEnabled = sConfigMgr->GetBoolDefault("IndividualXp.Enabled", 1);
-        MaxRate = sConfigMgr->GetIntDefault("MaxXPRate", 10);
-        DefaultRate = sConfigMgr->GetIntDefault("DefaultXPRate", 1);
+        IndividualXpEnabled = sConfigMgr->GetOption<bool>("IndividualXp.Enabled", 1);
+        MaxRate = sConfigMgr->GetOption<uint32>("MaxXPRate", 10);
+        DefaultRate = sConfigMgr->GetOption<uint32>("DefaultXPRate", 1);
     }
 };
 
-enum IndividualXP
+enum IndividualXPAcoreString
 {
     ACORE_STRING_CREDIT = 35411,
     ACORE_STRING_MODULE_DISABLED,
@@ -46,16 +46,16 @@ enum IndividualXP
     ACORE_STRING_COMMAND_DEFAULT
 };
 
-class Individual_Xp_Announce : public PlayerScript
+class IndividualXpAnnounce : public PlayerScript
 {
 public:
 
-    Individual_Xp_Announce() : PlayerScript("Individual_Xp_Announce") {}
+    IndividualXpAnnounce() : PlayerScript("IndividualXpAnnounce") {}
 
     void OnLogin(Player* player)
     {
         // Announce Module
-        if (IndividualXpEnabled & IndividualXpAnnounceModule)
+        if ((IndividualXpEnabled) && (IndividualXpAnnounceModule))
         {
             ChatHandler(player->GetSession()).SendSysMessage(ACORE_STRING_CREDIT);
         }
@@ -70,38 +70,39 @@ public:
     uint32 XPRate = 1;
 };
 
-class Individual_XP : public PlayerScript
+class IndividualXP : public PlayerScript
 {
 public:
-    Individual_XP() : PlayerScript("Individual_XP") { }
+    IndividualXP() : PlayerScript("IndividualXP") {}
 
-    void OnLogin(Player* p) override
+    void OnLogin(Player* player) override
     {
-        QueryResult result = CharacterDatabase.Query("SELECT `XPRate` FROM `individualxp` WHERE `CharacterGUID` = '{}'", p->GetGUID().GetCounter());
+        QueryResult result = CharacterDatabase.Query("SELECT `XPRate` FROM `individualxp` WHERE `CharacterGUID`='{}'", player->GetGUID().GetCounter());
+
         if (!result)
         {
-            p->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = DefaultRate;
+            player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate = DefaultRate;
         }
         else
         {
             Field* fields = result->Fetch();
-            p->CustomData.Set("Individual_XP", new PlayerXpRate(fields[0].Get<uint32>()));
+            player->CustomData.Set("IndividualXP", new PlayerXpRate(fields[0].Get<uint32>()));
         }
     }
 
-    void OnLogout(Player* p) override
+    void OnLogout(Player* player) override
     {
-        if (PlayerXpRate* data = p->CustomData.Get<PlayerXpRate>("Individual_XP"))
+        if (PlayerXpRate* data = player->CustomData.Get<PlayerXpRate>("IndividualXP"))
         {
-            uint32 rate = data->XPRate;
-            CharacterDatabase.DirectExecute("REPLACE INTO `individualxp` (`CharacterGUID`, `XPRate`) VALUES ('{}', '{}');", p->GetGUID().GetCounter(), rate);
+            CharacterDatabase.DirectExecute("REPLACE INTO `individualxp` (`CharacterGUID`, `XPRate`) VALUES ('{}', '{}');", player->GetGUID().GetCounter(), data->XPRate);
         }
     }
 
-    void OnGiveXP(Player* p, uint32& amount, Unit* /*victim*/, uint8 /*xpSource*/) override
+    void OnGiveXP(Player* player, uint32& amount, Unit* /*victim*/, uint8 /*xpSource*/) override
     {
-        if (IndividualXpEnabled) {
-            if (PlayerXpRate* data = p->CustomData.Get<PlayerXpRate>("Individual_XP"))
+        if (IndividualXpEnabled)
+        {
+            if (PlayerXpRate* data = player->CustomData.Get<PlayerXpRate>("IndividualXP"))
                 amount *= data->XPRate;
         }
     }
@@ -154,7 +155,7 @@ public:
         }
         else
         {
-            player->GetSession()->SendAreaTriggerMessage(ACORE_STRING_COMMAND_VIEW, player->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate);
+            player->GetSession()->SendAreaTriggerMessage(ACORE_STRING_COMMAND_VIEW, player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate);
         }
         return true;
     }
@@ -189,7 +190,7 @@ public:
             return false;
         }
 
-        player->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = rate;
+        player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate = rate;
         player->GetSession()->SendAreaTriggerMessage(ACORE_STRING_COMMAND_SET, rate);
         return true;
     }
@@ -233,7 +234,6 @@ public:
         return true;
     }
 
-    // Default Command
     static bool HandleDefaultCommand(ChatHandler* handler)
     {
         if (!IndividualXpEnabled)
@@ -248,16 +248,16 @@ public:
         if (!player)
             return false;
 
-        player->CustomData.GetDefault<PlayerXpRate>("Individual_XP")->XPRate = DefaultRate;
+        player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate = DefaultRate;
         player->GetSession()->SendAreaTriggerMessage(ACORE_STRING_COMMAND_DEFAULT, DefaultRate);
         return true;
     }
 };
 
-void AddIndividual_XPScripts()
+void AddIndividualXPScripts()
 {
-    new Individual_XP_conf();
-    new Individual_Xp_Announce();
-    new Individual_XP();
+    new IndividualXPConf();
+    new IndividualXpAnnounce();
+    new IndividualXP();
     new IndividualXPCommand();
 }
