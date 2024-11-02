@@ -14,6 +14,24 @@ This module allows each player to `view`, `enable`, `disable`, and `modify` thei
 2. Re-run cmake
 3. Compile.
 
+> [!IMPORTANT]
+> If you no longer use the module, remember to delete the tables.
+
+### Database World
+
+```sql
+DELETE FROM `command` WHERE `name` IN ('xp', 'xp set', 'xp view', 'xp default', 'xp enable', 'xp disable');
+
+SET @ENTRY:=35411;
+DELETE FROM `acore_string` WHERE `entry` BETWEEN @ENTRY+0 AND @ENTRY+9;
+```
+
+### Database Characters
+
+```sql
+DROP TABLE `individualxp`;
+```
+
 # Config
 
 There are two variables to configure in the Config:
