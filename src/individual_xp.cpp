@@ -16,7 +16,7 @@ Thanks to Rochet for the assistance
 struct IndividualXpModule
 {
     bool Enabled, AnnounceModule, AnnounceRatesOnLogin;
-    uint32 MaxRate, DefaultRate;
+    float MaxRate, DefaultRate;
 };
 
 IndividualXpModule individualXp;
@@ -45,8 +45,8 @@ public:
         individualXp.Enabled = sConfigMgr->GetOption<bool>("IndividualXp.Enabled", true);
         individualXp.AnnounceModule = sConfigMgr->GetOption<bool>("IndividualXp.Announce", true);
         individualXp.AnnounceRatesOnLogin = sConfigMgr->GetOption<bool>("IndividualXp.AnnounceRatesOnLogin", true);
-        individualXp.MaxRate = sConfigMgr->GetOption<uint32>("IndividualXp.MaxXPRate", 10);
-        individualXp.DefaultRate = sConfigMgr->GetOption<uint32>("IndividualXp.DefaultXPRate", 1);
+        individualXp.MaxRate = sConfigMgr->GetOption<float>("IndividualXp.MaxXPRate", 10.0f);
+        individualXp.DefaultRate = sConfigMgr->GetOption<float>("IndividualXp.DefaultXPRate", 1.0f);
     }
 };
 
@@ -54,8 +54,8 @@ class PlayerXpRate : public DataMap::Base
 {
 public:
     PlayerXpRate() {}
-    PlayerXpRate(uint32 XPRate) : XPRate(XPRate) {}
-    uint32 XPRate = 1;
+    PlayerXpRate(float XPRate) : XPRate(XPRate) {}
+    float XPRate = 1.0f;
 };
 
 class IndividualXP : public PlayerScript
@@ -74,7 +74,7 @@ public:
         else
         {
             Field* fields = result->Fetch();
-            player->CustomData.Set("IndividualXP", new PlayerXpRate(fields[0].Get<uint32>()));
+            player->CustomData.Set("IndividualXP", new PlayerXpRate(fields[0].Get<float>()));
         }
 
         if (individualXp.Enabled)
@@ -114,10 +114,11 @@ public:
         if (individualXp.Enabled)
         {
             if (PlayerXpRate* data = player->CustomData.Get<PlayerXpRate>("IndividualXP"))
-                amount *= data->XPRate;
+            {
+                amount = static_cast<uint32>(std::round(static_cast<float>(amount) * data->XPRate));
+            }
         }
     }
-
 };
 
 class IndividualXPCommand : public CommandScript
@@ -171,7 +172,7 @@ public:
         return true;
     }
 
-    static bool HandleSetCommand(ChatHandler* handler, uint32 rate)
+    static bool HandleSetCommand(ChatHandler* handler, float rate)
     {
         if (!individualXp.Enabled)
         {
@@ -202,7 +203,8 @@ public:
                 handler->SetSentErrorMessage(true);
                 return false;
             }
-            else if (rate == 0)
+
+            if (rate < 0.1f)
             {
                 handler->PSendSysMessage(ACORE_STRING_MIN_RATE);
                 handler->SetSentErrorMessage(true);
@@ -249,7 +251,7 @@ public:
         {
             handler->PSendSysMessage(ACORE_STRING_MODULE_DISABLED);
             handler->SetSentErrorMessage(true);
-            return false;
+            return true;
         }
 
         Player* player = handler->GetSession()->GetPlayer();
@@ -257,17 +259,17 @@ public:
         if (!player)
             return false;
 
-        if (!player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
+        if (player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
         {
             player->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
             ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_ENABLED);
-            return true;
         }
         else
         {
-            ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_VIEW);
-            return false;
+            ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_RATES_DISABLED);
         }
+
+        return true;
     }
 
     static bool HandleDefaultCommand(ChatHandler* handler)

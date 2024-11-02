@@ -14,7 +14,7 @@
 -- Dumping structure for table acore_characters.individualxp
 CREATE TABLE IF NOT EXISTS `individualxp` (
   `CharacterGUID` int(11) NOT NULL,
-  `XPRate` int(11) NOT NULL DEFAULT '0',
+  `XPRate` float NOT NULL,
   PRIMARY KEY (`CharacterGUID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
