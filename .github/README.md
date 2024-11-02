@@ -14,24 +14,6 @@ This module allows each player to `view`, `enable`, `disable`, and `modify` thei
 2. Re-run cmake
 3. Compile.
 
-> [!IMPORTANT]
-> If you no longer use the module, remember to delete the tables.
-
-### Database World
-
-```sql
-DELETE FROM `command` WHERE `name` IN ('xp', 'xp set', 'xp view', 'xp default', 'xp enable', 'xp disable');
-
-SET @ENTRY:=35411;
-DELETE FROM `acore_string` WHERE `entry` BETWEEN @ENTRY+0 AND @ENTRY+9;
-```
-
-### Database Characters
-
-```sql
-DROP TABLE `individualxp`;
-```
-
 # Config
 
 There are two variables to configure in the Config:
@@ -63,3 +45,21 @@ The Max XP Rate variable dictates how high a player can set their XP rate. While
 # Video Showcase
 
 [![Youtube Link](https://i.imgur.com/Jhrdgv6.png)](https://www.youtube.com/watch?v=T6UEX47mPeE)
+
+> [!IMPORTANT]
+> If you no longer use the module, remember to delete any tables or values added within them.
+
+### Database World
+
+```sql
+DELETE FROM `command` WHERE `name` IN ('xp', 'xp set', 'xp view', 'xp default', 'xp enable', 'xp disable');
+
+SET @ENTRY:=35411;
+DELETE FROM `acore_string` WHERE `entry` BETWEEN @ENTRY+0 AND @ENTRY+9;
+```
+
+### Database Characters
+
+```sql
+DROP TABLE `individualxp`;
+```
