@@ -252,7 +252,7 @@ public:
             if (!player)
                 return false;
 
-            Player* target = handler->GetSelectedPlayer();
+            Player* target = player->GetSelectedPlayer();
             if (target)
             {
                 player = target;
