@@ -139,11 +139,11 @@ public:
     {
         static ChatCommandTable IndividualXPCommandTable =
         {
-            { "enable",  HandleEnableCommand, SEC_PLAYER, Console::No },
-            { "disable",  HandleDisableCommand, SEC_PLAYER, Console::No },
-            { "view",  HandleViewCommand, SEC_PLAYER, Console::No },
-            { "set",  HandleSetCommand, SEC_PLAYER, Console::No },
-            { "default",  HandleDefaultCommand, SEC_PLAYER, Console::No }
+            { "enable",  HandleEnableCommand, SEC_PLAYER, Console::Yes },
+            { "disable",  HandleDisableCommand, SEC_PLAYER, Console::Yes },
+            { "view",  HandleViewCommand, SEC_PLAYER, Console::Yes },
+            { "set",  HandleSetCommand, SEC_PLAYER, Console::Yes },
+            { "default",  HandleDefaultCommand, SEC_PLAYER, Console::Yes }
         };
 
         static ChatCommandTable IndividualXPBaseTable =
