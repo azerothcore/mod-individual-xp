@@ -163,17 +163,14 @@ public:
             return false;
         }
 
-        if (handler->GetSession()->GetSecurity() < individualXp.GMLevel)
+        if (handler->GetSession() && handler->GetSession()->GetSecurity() < individualXp.GMLevel)
         {
             handler->PSendSysMessage(ACORE_STRING_INSUFFICIENT_SECURITY);
             handler->SetSentErrorMessage(true);
             return false;
         }
 
-        Player* player = handler->GetSession()->GetPlayer();
-
-        if (!player)
-            return false;
+        Player* player = handler->GetSession() ? handler->GetSession()->GetPlayer() : nullptr;
 
         bool isOther = false;
 
@@ -190,6 +187,9 @@ public:
         }
         else
         {
+            if (!player)
+                return false;
+
             Player* target = player->GetSelectedPlayer();
             if (target)
             {
@@ -225,17 +225,14 @@ public:
         if (!rate)
             return false;
 
-        if (handler->GetSession()->GetSecurity() < individualXp.GMLevel)
+        if (handler->GetSession() && handler->GetSession()->GetSecurity() < individualXp.GMLevel)
         {
             handler->PSendSysMessage(ACORE_STRING_INSUFFICIENT_SECURITY);
             handler->SetSentErrorMessage(true);
             return false;
         }
 
-        Player* player = handler->GetSession()->GetPlayer();
-
-        if (!player)
-            return false;
+        Player* player = handler->GetSession() ? handler->GetSession()->GetPlayer() : nullptr;
 
         bool isOther = false;
 
@@ -252,7 +249,10 @@ public:
         }
         else
         {
-            Player* target = player->GetSelectedPlayer();
+            if (!player)
+                return false;
+
+            Player* target = handler->GetSelectedPlayer();
             if (target)
             {
                 player = target;
@@ -304,17 +304,14 @@ public:
             return false;
         }
 
-        if (handler->GetSession()->GetSecurity() < individualXp.GMLevel)
+        if (handler->GetSession() && handler->GetSession()->GetSecurity() < individualXp.GMLevel)
         {
             handler->PSendSysMessage(ACORE_STRING_INSUFFICIENT_SECURITY);
             handler->SetSentErrorMessage(true);
             return false;
         }
 
-        Player* player = handler->GetSession()->GetPlayer();
-
-        if (!player)
-            return false;
+        Player* player = handler->GetSession() ? handler->GetSession()->GetPlayer() : nullptr;
 
         bool isOther = false;
 
@@ -331,6 +328,9 @@ public:
         }
         else
         {
+            if (!player)
+                return false;
+
             Player* target = player->GetSelectedPlayer();
             if (target)
             {
@@ -364,17 +364,14 @@ public:
             return true;
         }
 
-        if (handler->GetSession()->GetSecurity() < individualXp.GMLevel)
+        if (handler->GetSession() && handler->GetSession()->GetSecurity() < individualXp.GMLevel)
         {
             handler->PSendSysMessage(ACORE_STRING_INSUFFICIENT_SECURITY);
             handler->SetSentErrorMessage(true);
             return false;
         }
 
-        Player* player = handler->GetSession()->GetPlayer();
-
-        if (!player)
-            return false;
+        Player* player = handler->GetSession() ? handler->GetSession()->GetPlayer() : nullptr;
 
         bool isOther = false;
 
@@ -391,6 +388,9 @@ public:
         }
         else
         {
+            if (!player)
+                return false;
+
             Player* target = player->GetSelectedPlayer();
             if (target)
             {
@@ -424,17 +424,14 @@ public:
             return false;
         }
 
-        if (handler->GetSession()->GetSecurity() < individualXp.GMLevel)
+        if (handler->GetSession() && handler->GetSession()->GetSecurity() < individualXp.GMLevel)
         {
             handler->PSendSysMessage(ACORE_STRING_INSUFFICIENT_SECURITY);
             handler->SetSentErrorMessage(true);
             return false;
         }
 
-        Player* player = handler->GetSession()->GetPlayer();
-
-        if (!player)
-            return false;
+        Player* player = handler->GetSession() ? handler->GetSession()->GetPlayer() : nullptr;
 
         bool isOther = false;
 
@@ -451,6 +448,9 @@ public:
         }
         else
         {
+            if (!player)
+                return false;
+
             Player* target = player->GetSelectedPlayer();
             if (target)
             {
