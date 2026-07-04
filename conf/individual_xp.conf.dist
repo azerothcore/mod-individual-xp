@@ -61,3 +61,18 @@ IndividualXp.MaxXPRate = 10
 #
 
 IndividualXp.DefaultXPRate = 1
+
+#
+#   IndividualXp.GMLevel
+#
+#   Description: Minimum account security level required to use .xp commands.
+#   Example:
+#       0 (Any player can use the commands)
+#       1 (Moderator and above)
+#       2 (GM and above)
+#       3 (Administrator and above)
+#
+#   Default: 3
+#
+
+IndividualXp.GMLevel = 3
