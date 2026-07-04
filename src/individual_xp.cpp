@@ -225,7 +225,7 @@ public:
                 handler->SetSentErrorMessage(true);
                 return false;
             }
-            ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_VIEW_OTHER, player->GetName(), player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate);
+            handler->PSendSysMessage(ACORE_STRING_COMMAND_VIEW_OTHER, player->GetName(), player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate);
             return true;
         }
 
@@ -236,7 +236,7 @@ public:
             return false;
         }
 
-        ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_VIEW, player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate);
+        handler->PSendSysMessage(ACORE_STRING_COMMAND_VIEW, player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate);
 
         return true;
     }
@@ -290,14 +290,14 @@ public:
                     return false;
                 }
                 player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate = rate;
-                ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_SET_OTHER, targetName, rate);
+                handler->PSendSysMessage(ACORE_STRING_COMMAND_SET_OTHER, targetName, rate);
                 if (WorldSession* targetSession = player->GetSession())
                     ChatHandler(targetSession).PSendSysMessage(ACORE_STRING_COMMAND_SET, rate);
             }
             else
             {
                 CharacterDatabase.Execute("REPLACE INTO individualxp (CharacterGUID, XPRate) VALUES ({}, {})", playerName->GetGUID().GetCounter(), rate);
-                ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_SET_OTHER, targetName, rate);
+                handler->PSendSysMessage(ACORE_STRING_COMMAND_SET_OTHER, targetName, rate);
             }
 
             return true;
@@ -317,7 +317,7 @@ public:
                 return false;
             }
             player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate = rate;
-            ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_SET_OTHER, player->GetName(), rate);
+            handler->PSendSysMessage(ACORE_STRING_COMMAND_SET_OTHER, player->GetName(), rate);
             if (WorldSession* targetSession = player->GetSession())
                 ChatHandler(targetSession).PSendSysMessage(ACORE_STRING_COMMAND_SET, rate);
             return true;
@@ -331,7 +331,7 @@ public:
         }
 
         player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate = rate;
-        ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_SET, rate);
+        handler->PSendSysMessage(ACORE_STRING_COMMAND_SET, rate);
 
         return true;
     }
@@ -364,18 +364,18 @@ public:
                 if (!player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
                 {
                     player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-                    ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_DISABLE_OTHER, targetName);
+                    handler->PSendSysMessage(ACORE_STRING_COMMAND_DISABLE_OTHER, targetName);
                 }
                 else
                 {
-                    ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_RATES_DISABLED);
+                    handler->PSendSysMessage(ACORE_STRING_RATES_DISABLED);
                     return false;
                 }
             }
             else
             {
                 CharacterDatabase.Execute("UPDATE characters SET playerFlags = playerFlags | {} WHERE guid = {}", uint32(PLAYER_FLAGS_NO_XP_GAIN), playerName->GetGUID().GetCounter());
-                ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_DISABLE_OTHER, targetName);
+                handler->PSendSysMessage(ACORE_STRING_COMMAND_DISABLE_OTHER, targetName);
             }
 
             return true;
@@ -391,11 +391,11 @@ public:
             if (!player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
             {
                 player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-                ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_DISABLE_OTHER, player->GetName());
+                handler->PSendSysMessage(ACORE_STRING_COMMAND_DISABLE_OTHER, player->GetName());
             }
             else
             {
-                ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_RATES_DISABLED);
+                handler->PSendSysMessage(ACORE_STRING_RATES_DISABLED);
                 return false;
             }
             return true;
@@ -404,12 +404,12 @@ public:
         if (!player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
         {
             player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-            ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_DISABLED);
+            handler->PSendSysMessage(ACORE_STRING_COMMAND_DISABLED);
             return true;
         }
         else
         {
-            ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_RATES_DISABLED);
+            handler->PSendSysMessage(ACORE_STRING_RATES_DISABLED);
             return false;
         }
     }
@@ -442,17 +442,17 @@ public:
                 if (player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
                 {
                     player->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-                    ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_ENABLE_OTHER, targetName);
+                    handler->PSendSysMessage(ACORE_STRING_COMMAND_ENABLE_OTHER, targetName);
                 }
                 else
                 {
-                    ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_RATES_DISABLED);
+                    handler->PSendSysMessage(ACORE_STRING_RATES_DISABLED);
                 }
             }
             else
             {
                 CharacterDatabase.Execute("UPDATE characters SET playerFlags = playerFlags & ~{} WHERE guid = {}", uint32(PLAYER_FLAGS_NO_XP_GAIN), playerName->GetGUID().GetCounter());
-                ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_ENABLE_OTHER, targetName);
+                handler->PSendSysMessage(ACORE_STRING_COMMAND_ENABLE_OTHER, targetName);
             }
 
             return true;
@@ -468,11 +468,11 @@ public:
             if (player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
             {
                 player->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-                ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_ENABLE_OTHER, player->GetName());
+                handler->PSendSysMessage(ACORE_STRING_COMMAND_ENABLE_OTHER, player->GetName());
             }
             else
             {
-                ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_RATES_DISABLED);
+                handler->PSendSysMessage(ACORE_STRING_RATES_DISABLED);
             }
             return true;
         }
@@ -480,11 +480,11 @@ public:
         if (player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
         {
             player->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-            ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_ENABLED);
+            handler->PSendSysMessage(ACORE_STRING_COMMAND_ENABLED);
         }
         else
         {
-            ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_RATES_DISABLED);
+            handler->PSendSysMessage(ACORE_STRING_RATES_DISABLED);
         }
 
         return true;
@@ -522,12 +522,12 @@ public:
                     return false;
                 }
                 player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate = individualXp.DefaultRate;
-                ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_DEFAULT_OTHER, targetName, individualXp.DefaultRate);
+                handler->PSendSysMessage(ACORE_STRING_COMMAND_DEFAULT_OTHER, targetName, individualXp.DefaultRate);
             }
             else
             {
                 CharacterDatabase.Execute("DELETE FROM individualxp WHERE CharacterGUID = {}", playerName->GetGUID().GetCounter());
-                ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_DEFAULT_OTHER, targetName, individualXp.DefaultRate);
+                handler->PSendSysMessage(ACORE_STRING_COMMAND_DEFAULT_OTHER, targetName, individualXp.DefaultRate);
             }
 
             return true;
@@ -547,7 +547,7 @@ public:
                 return false;
             }
             player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate = individualXp.DefaultRate;
-            ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_DEFAULT_OTHER, player->GetName(), individualXp.DefaultRate);
+            handler->PSendSysMessage(ACORE_STRING_COMMAND_DEFAULT_OTHER, player->GetName(), individualXp.DefaultRate);
             return true;
         }
 
@@ -559,7 +559,7 @@ public:
         }
 
         player->CustomData.GetDefault<PlayerXpRate>("IndividualXP")->XPRate = individualXp.DefaultRate;
-        ChatHandler(handler->GetSession()).PSendSysMessage(ACORE_STRING_COMMAND_DEFAULT, individualXp.DefaultRate);
+        handler->PSendSysMessage(ACORE_STRING_COMMAND_DEFAULT, individualXp.DefaultRate);
 
         return true;
     }
