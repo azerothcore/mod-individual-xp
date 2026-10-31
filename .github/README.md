@@ -54,8 +54,9 @@ The Max XP Rate variable dictates how high a player can set their XP rate. While
 ```sql
 DELETE FROM `command` WHERE `name` IN ('xp', 'xp set', 'xp view', 'xp default', 'xp enable', 'xp disable');
 
-SET @ENTRY:=35411;
+SET @ENTRY:=100000;
 DELETE FROM `acore_string` WHERE `entry` BETWEEN @ENTRY+0 AND @ENTRY+9;
+DELETE FROM `acore_string_locale` WHERE `entry` BETWEEN @ENTRY+0 AND @ENTRY+9;
 ```
 
 ### Database Characters
